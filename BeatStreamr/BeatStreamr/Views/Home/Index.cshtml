@@ -1,0 +1,46 @@
+﻿@model IEnumerable<BeatStreamr.Models.User>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron indexJumbo">
+    <div class="container">
+        <h1>Beat Streamr</h1>
+		<h2>All your beats. All your streams. All for free.</h2>
+	</div>
+</div>
+<div class="container">
+<div class="row">
+    <div class="col-sm-12">
+            <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">Top Producers
+            </h2>
+        </div>
+        <div class="panel-body topProducers">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-3 col-sm-6">
+                    <div class="thumbnail">
+                      @if(string.IsNullOrWhiteSpace(item.ProfileImagePath))
+                {
+                    <img src="/images/users/profile/anonymous.gif" />
+                }
+                else
+                {
+                    <img src="@Url.Content(item.ProfileImagePath)" />
+                }
+                      <div class="caption">
+                        <h4><a asp-controller="Users" asp-action="Details" asp-route-id="@item.ID">@Html.DisplayFor(modelItem => item.Name)</a></h4>
+                      </div>
+                    </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+	</div>
+</div>
+</div>

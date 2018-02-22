@@ -1,0 +1,101 @@
+﻿<div class="side-music-player">
+    <div class="col-md-12">
+		<audio controls="controls" class="hidden audio-play-element"></audio>
+		<div class="song-background"><div class="gradient-progress"></div></div>
+        <progress class="song-progress" max="100" value="0"></progress>
+		<div class="row">
+            <div class="col-xs-10">
+                <div class="side-music-artist-text">
+                    <div class="song-title">
+                        <a href="#"></a>
+                    </div>
+                    <div class="song-artist">
+                        <a class="text-mute" href="#"><small></small></a>
+                    </div>
+                </div>
+			</div>
+			<div class="col-xs-1">
+                <span class="glyphicon glyphicon-heart"></span>
+			</div>
+		</div>
+		<div class="row">
+            <div class="player-btn-group">
+                <div class="btn-group" role="group" aria-label="...">
+					<button type="button" class="btn btn-link player-play-menu">
+                        <span class="glyphicon glyphicon-chevron-down"></span>
+                    </button>
+				    <button type="button" class="btn btn-link player-play-last">
+					    <span class="glyphicon glyphicon-step-backward"></span>
+				    </button>
+                  <button type="button" class="btn btn-link player-play-toggle"
+						data-status="notplaying"
+						data-index="">
+				    <span class="glyphicon glyphicon-play"></span>
+				    </button>
+                  <button type="button" class="btn btn-link player-play-next">
+                    <span class="glyphicon glyphicon-step-forward"></span>
+				</button>
+					<button type="button" class="btn btn-link player-play-repeat">
+                    <span class="glyphicon glyphicon-repeat"></span>
+                </button>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!--<script>
+    $(".player-play-toggle").on("click", function() {
+        if ($(this).attr("data-status") == "playing") {
+            pauseAllTracks($(this).attr("data-index"));
+            $(this).children().attr("class", "glyphicon glyphicon-play");
+	        $(this).attr("data-status", "notplaying");
+        }
+	    else
+	    {
+            $("audio").each(function(index){
+                if(index == $(".player-play-toggle").attr("data-index"))
+	            {
+                    $(this)[0].play();
+	            }
+	        });
+	        $(this).children().attr("class", "glyphicon glyphicon-pause");
+	    }
+    });
+
+	$(".player-play-repeat").on("click", function(){
+        $("audio").each(function(index) {
+        	if(index == $(".player-play-toggle").attr("data-index"))
+        	{
+	            $(this)[0].loop = true;   
+        	}
+	    });
+	});
+
+	$(".player-play-last").on("click", function(){
+        $("audio").each(function(index) {
+	    console.log($(".player-play-toggle").attr("data-index") - 1);
+            if(index == $(".player-play-toggle").attr("data-index") - 1)
+	        {
+	            pauseAllTracks($(".player-play-toggle").attr("data-index"));
+                $(this)[0].play();
+	            $(".player-play-toggle").attr("data-index", index);
+	        }
+        });
+	});
+
+	   $(".player-play-next").on("click", function(){
+        var audioPlaying = $("audio").index($(".player-play-toggle").attr("data-index"));
+	console.log(audioPlaying);
+    });
+
+    function pauseAllTracks(aIndex) {
+        $("audio").each(function(index) {
+            if(index == aIndex)
+        	{
+	            $(this)[0].pause();
+        	}
+        });
+    }
+</script>-->

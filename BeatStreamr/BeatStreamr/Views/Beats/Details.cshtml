@@ -1,0 +1,93 @@
+@model BeatStreamr.Models.BeatArtistViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div class="container body-content">
+    @Html.Partial("_BeatPlayer", Model)
+</div>
+
+
+<script type="text/javascript">
+    var playing = false;
+    var jAudio;
+    var hAudio;
+    var audioLoaded = false;
+    $(".play-toggle").on("click", function() {
+        //Get jquery audio element.
+        jAudio = $(this).prev();
+        //Get the actual HTML element
+        hAudio = jAudio[0];
+        //Check if audio has been given a source to load
+        if(hAudio.src == "")
+        {
+            loadTrack(hAudio, $(this).attr("data-file-path"));
+        }
+            jAudio.on("loadedmetadata", function(){
+        }).on("timeupdate", function() {
+            var s = parseInt(hAudio.currentTime % 60);
+            var m = parseInt((hAudio.currentTime / 60) % 60);
+            //Add 0 if seconds less than 10
+            if (s < 10) {
+                s = '0' + s;
+            }
+            //$('#duration').html(m + '.' + s);   
+            var value = 0;
+            if (hAudio.currentTime > 0) {
+                $(this).parent().next().find(".song-progress").val((100 / hAudio.duration) * hAudio.currentTime);
+            }
+        }).on("ended", function() {
+            hAudio.currentTime = 0;
+            $(this).next().children().attr("class", "glyphicon glyphicon-play");
+            $(this).parent().next().find(".song-progress").val(0);
+        }).on("play", function() {
+            $(this).next().children().attr("class", "glyphicon glyphicon-pause");
+        }).on("pause", function() {
+            $(this).next().children().attr("class", "glyphicon glyphicon-play");
+        });
+
+        if(hAudio.currentTime > 0 && !hAudio.paused && !hAudio.ended)
+        {
+            pauseTrack($(this), hAudio);
+        }
+    else {
+        playTrack($(this), hAudio);
+    }
+            
+    });
+
+
+    function loadTrack(element, mediaSource)
+    {
+        element.src = mediaSource;
+        element.load();
+    }
+
+    function playTrack(button, element)
+    {
+        pauseAllTracks();
+        playing = true;
+        element.play();
+        
+    }
+
+    function pauseTrack(button, element)
+    {
+        playing = false;
+        element.pause();
+    }
+
+    function pauseAllTracks()
+    {
+                       $("audio").each(function (){
+            if(!this.paused)
+            {
+                this.pause();
+    playing = false;
+            }
+        });
+    playing = false;
+    }
+</script>

@@ -1,0 +1,182 @@
+@model BeatStreamr.Models.UserBeatsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="body-content beats-list-page">
+    <div class="clearfix">
+            
+        <div class="left-item">
+            @Html.Partial("_ArtistHeader", Model.User)
+            @Html.Partial("_BeatsList", Model.beatsList)
+        </div>
+        <div class="right-item">
+            @Html.Partial("_SideMusicControls")
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".play-toggle").on("click", function() {
+        var playerStatus = $(this).attr("data-status");
+
+        playerDecision(playerStatus, $(this))
+        
+    });
+
+    function playerDecision(status, element)
+    {
+        switch(status)
+        {
+            case "notplaying":
+                var beatTitle = element.data("beat-title");
+                var artistName = element.data("artist-name");
+                var filePath = element.data("file-path");
+                var artPath = element.data("art-path");
+
+                $(".side-music-player .song-title a").html(beatTitle);
+                $(".side-music-player .song-artist a small").html(artistName);
+                $(".audio-play-element").get(0).src = filePath;
+                $(".audio-play-element").get(0).play();
+                element.children().removeClass("glyphicon-play").addClass("glyphicon-pause");
+                $(".player-play-toggle .glyphicon").removeClass("glyphicon-play").addClass("glyphicon-pause");
+                $(".song-background").css("background-image", 'url("' + artPath + '")');
+                $(".beats-list-group .list-group-item .play-toggle").each(function(){
+                    if($(this).attr("data-status") != "notplaying")
+                    {
+                        $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                        $(this).attr("data-status", "notplaying");
+                    }
+                });
+                element.attr("data-status", "playing");
+                break;
+
+            case "paused":
+                $(".audio-play-element").get(0).play();
+                element.attr("data-status", "playing");
+                element.children().removeClass("glyphicon-play").addClass("glyphicon-pause");
+                $(".player-play-toggle .glyphicon").removeClass("glyphicon-play").addClass("glyphicon-pause");
+                break;
+
+            case "playing":
+                $(".audio-play-element").get(0).pause();
+                element.attr("data-status", "paused");
+                element.children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+                break;
+
+            default:
+                break;
+    
+        }
+    }
+
+    $(".audio-play-element").on("ended", function(){
+               var playingElementIndex = 0;
+    $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+        $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+            if($(this).attr("data-status") == "playing")
+            {
+                playingElementIndex = index + 1;
+                $(this).attr("data-status", "notplaying");
+                $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+            }
+        });
+
+        $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+            if(index == playingElementIndex)
+            {
+                playingElementIndex = index;
+                playerDecision($(this).attr("data-status"), $(this));
+            }
+        });
+    }).get(0);
+
+    $(".player-play-next").on("click", function() {
+        var playingElementIndex = 0;
+        $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+            if($(this).attr("data-status") != "notplaying")
+            {
+                playingElementIndex = index + 1;
+                $(this).attr("data-status", "notplaying");
+                $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+            }
+        });
+
+        $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+            if(index == playingElementIndex)
+            {
+                playingElementIndex = index;
+                playerDecision($(this).attr("data-status"), $(this));
+            }
+        });
+    });
+
+       $(".player-play-last").on("click", function() {
+            var playingElementIndex = 0;
+            $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+                if($(this).attr("data-status") != "notplaying")
+                {
+                    playingElementIndex = index - 1;
+                    $(this).attr("data-status", "notplaying");
+                    $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                    $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+                }
+            });
+
+            $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+                if(index == playingElementIndex)
+                {
+                    playingElementIndex = index;
+                    playerDecision($(this).attr("data-status"), $(this));
+                }
+        });
+    });
+
+    $(".player-play-toggle").on("click", function(){
+        if($(".audio-play-element").get(0).duration > 0 && !$(".audio-play-element").get(0).paused)
+        {
+            $(".audio-play-element").get(0).pause();
+            $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+            $(".beats-list-group .list-group-item .play-toggle").each(function(){
+                if($(this).attr("data-status") != "notplaying")
+                {
+                    $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                    $(this).attr("data-status", "paused");
+                }
+            });
+
+        }
+        else if($(".audio-play-element").get(0).paused)
+        {
+            $(".audio-play-element").get(0).play();
+            $(".player-play-toggle .glyphicon").removeClass("glyphicon-play").addClass("glyphicon-pause");
+            $(".beats-list-group .list-group-item .play-toggle").each(function(){
+                if($(this).attr("data-status") != "notplaying")
+                {
+                    $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                    $(this).attr("data-status", "play");
+                }
+            });
+        }
+    });
+
+    $(".audio-play-element").on("loadedmetadata", function(){
+        }).on("timeupdate", function() {
+            var s = parseInt(this.currentTime % 60);
+            var m = parseInt((this.currentTime / 60) % 60);
+            //Add 0 if seconds less than 10
+            if (s < 10) {
+                s = '0' + s;
+            }
+            //$('#duration').html(m + '.' + s);   
+            var value = 0;
+            if (this.currentTime > 0) {
+                $(".song-progress").val((100 / this.duration) * this.currentTime);
+                $(".gradient-progress").css("width", (100 / this.duration) * this.currentTime + "%");
+            }
+        }).get(0);
+
+</script>

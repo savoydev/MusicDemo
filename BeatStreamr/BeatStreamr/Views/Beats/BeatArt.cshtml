@@ -1,0 +1,20 @@
+﻿@model BeatStreamr.Models.BeatArtFilePathViewModel
+
+
+<form asp-action="BeatArt" asp-controller="Beats" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="ID" />
+    <div class="form-group">
+        <label asp-for="ArtFilePath" class="control-label"></label>
+        <input type="file" accept="image/*" class="form-control" asp-for="ArtFilePath" name="pic" />
+        <span asp-validation-for="ArtFilePath" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default" />
+    </div>
+</form>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

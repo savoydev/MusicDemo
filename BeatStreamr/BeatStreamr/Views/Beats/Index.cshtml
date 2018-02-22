@@ -1,0 +1,281 @@
+@model IEnumerable<BeatStreamr.Models.BeatArtistViewModel>
+
+@{
+    ViewData["Title"] = "Beats";
+}
+
+<div class="body-content beats-list-page">
+    <div class="clearfix">
+            
+		<div class="left-item">
+			@Html.Partial("_BeatsHeader")
+            @Html.Partial("_BeatsList", Model)
+		</div>
+		<div class="right-item">
+            @Html.Partial("_SideMusicControls")
+		</div>
+    </div>
+</div>
+
+<script>
+    $(".play-toggle").on("click", function() {
+        var playerStatus = $(this).attr("data-status");
+
+        playerDecision(playerStatus, $(this))
+	    
+	});
+
+	function playerDecision(status, element)
+	{
+        switch(status)
+        {
+            case "notplaying":
+                var beatTitle = element.data("beat-title");
+                var artistName = element.data("artist-name");
+                var filePath = element.data("file-path");
+	            var artPath = element.data("art-path");
+
+	            $(".side-music-player .song-title a").html(beatTitle);
+	            $(".side-music-player .song-artist a small").html(artistName);
+                $(".audio-play-element").get(0).src = filePath;
+                $(".audio-play-element").get(0).play();
+	            element.children().removeClass("glyphicon-play").addClass("glyphicon-pause");
+	            $(".player-play-toggle .glyphicon").removeClass("glyphicon-play").addClass("glyphicon-pause");
+	            $(".song-background").css("background-image", 'url("' + artPath + '")');
+	            $(".beats-list-group .list-group-item .play-toggle").each(function(){
+	                if($(this).attr("data-status") != "notplaying")
+	                {
+                        $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                        $(this).attr("data-status", "notplaying");
+	                }
+	            });
+	            element.parent().parent().addClass("list-item-hover");
+	            element.attr("data-status", "playing");
+                break;
+
+            case "paused":
+                $(".audio-play-element").get(0).play();
+                element.attr("data-status", "playing");
+	            element.children().removeClass("glyphicon-play").addClass("glyphicon-pause");
+                $(".player-play-toggle .glyphicon").removeClass("glyphicon-play").addClass("glyphicon-pause");
+                break;
+
+            case "playing":
+                $(".audio-play-element").get(0).pause();
+                element.attr("data-status", "paused");
+	            element.parent().parent().addClass("list-item-hover");
+	            element.children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+                break;
+
+            default:
+                break;
+    
+        }
+	}
+
+	$(".audio-play-element").on("ended", function(){
+	           var playingElementIndex = 0;
+	$(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+        $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+            if($(this).attr("data-status") == "playing")
+            {
+                playingElementIndex = index + 1;
+                $(this).attr("data-status", "notplaying");
+	            $(this).parent().parent().removeClass("list-item-hover");
+	            $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+            }
+        });
+
+        $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+            if(index == playingElementIndex)
+            {
+                playingElementIndex = index;
+                playerDecision($(this).attr("data-status"), $(this));
+            }
+        });
+	}).get(0);
+
+	$(".player-play-next").on("click", function() {
+	    var playingElementIndex = 0;
+        $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+            if($(this).attr("data-status") != "notplaying")
+	        {
+                playingElementIndex = index + 1;
+                $(this).attr("data-status", "notplaying");
+	            $(this).parent().parent().removeClass("list-item-hover");
+	            $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+	        }
+	    });
+
+    	$(".beats-list-group .list-group-item .play-toggle").each(function(index){
+            if(index == playingElementIndex)
+            {
+                playingElementIndex = index;
+	            playerDecision($(this).attr("data-status"), $(this));
+            }
+        });
+	});
+
+	   $(".player-play-last").on("click", function() {
+            var playingElementIndex = 0;
+            $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+                if($(this).attr("data-status") != "notplaying")
+                {
+                    playingElementIndex = index - 1;
+                    $(this).attr("data-status", "notplaying");
+	                $(this).parent().parent().removeClass("list-item-hover");
+	                $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                    $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+                }
+            });
+
+            $(".beats-list-group .list-group-item .play-toggle").each(function(index){
+                if(index == playingElementIndex)
+                {
+                    playingElementIndex = index;
+                    playerDecision($(this).attr("data-status"), $(this));
+                }
+        });
+    });
+
+	$(".player-play-toggle").on("click", function(){
+        if($(".audio-play-element").get(0).duration > 0 && !$(".audio-play-element").get(0).paused)
+	    {
+            $(".audio-play-element").get(0).pause();
+	        $(".player-play-toggle .glyphicon").removeClass("glyphicon-pause").addClass("glyphicon-play");
+            $(".beats-list-group .list-group-item .play-toggle").each(function(){
+                if($(this).attr("data-status") != "notplaying")
+                {
+                    $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                    $(this).attr("data-status", "paused");
+                }
+            });
+
+	    }
+        else if($(".audio-play-element").get(0).paused)
+	    {
+            $(".audio-play-element").get(0).play();
+            $(".player-play-toggle .glyphicon").removeClass("glyphicon-play").addClass("glyphicon-pause");
+            $(".beats-list-group .list-group-item .play-toggle").each(function(){
+                if($(this).attr("data-status") != "notplaying")
+                {
+                    $(this).children().removeClass("glyphicon-pause").addClass("glyphicon-play");
+                    $(this).attr("data-status", "play");
+                }
+            });
+	    }
+	});
+
+	$(".audio-play-element").on("loadedmetadata", function(){
+        }).on("timeupdate", function() {
+            var s = parseInt(this.currentTime % 60);
+            var m = parseInt((this.currentTime / 60) % 60);
+            //Add 0 if seconds less than 10
+            if (s < 10) {
+                s = '0' + s;
+            }
+            //$('#duration').html(m + '.' + s);   
+            var value = 0;
+            if (this.currentTime > 0) {
+                $(".song-progress").val((100 / this.duration) * this.currentTime);
+	            $(".gradient-progress").css("width", (100 / this.duration) * this.currentTime + "%");
+            }
+        }).get(0);
+
+</script>
+
+<!--<script type="text/javascript">
+    var playing = false;
+    var jAudio;
+    var hAudio;
+    var audioLoaded = false;
+    $(".play-toggle").on("click", function() {
+        //Get jquery audio element.
+        jAudio = $(this).prev();
+        //Get the actual HTML element
+        hAudio = jAudio[0];
+        //Check if audio has been given a source to load
+        if(hAudio.src == "")
+        {
+            loadTrack(hAudio, jAudio, $(this).attr("data-file-path"));
+        }
+            jAudio.on("loadedmetadata", function(){
+        }).on("timeupdate", function() {
+            var s = parseInt(hAudio.currentTime % 60);
+            var m = parseInt((hAudio.currentTime / 60) % 60);
+            //Add 0 if seconds less than 10
+            if (s < 10) {
+                s = '0' + s;
+            }
+            //$('#duration').html(m + '.' + s);   
+            var value = 0;
+            if (hAudio.currentTime > 0) {
+                $(".song-progress").val((100 / hAudio.duration) * hAudio.currentTime);
+            }
+        }).on("ended", function() {
+            hAudio.currentTime = 0;
+	        $(".side-music-player .player-play-toggle").children().attr("class", "glyphicon glyphicon-play");
+            $(".side-music-player .player-play-toggle").attr("data-status", "notplaying");
+            $(this).next().children().attr("class", "glyphicon glyphicon-play");
+            $(this).parent().next().find(".song-progress").val(0);
+        }).on("play", function() {
+            $(this).next().children().attr("class", "glyphicon glyphicon-pause");
+	        $(".side-music-player .player-play-toggle").attr("data-status", "playing");
+        }).on("pause", function() {
+	$(".side-music-player .player-play-toggle").attr("data-status", "notplaying");
+	$(".side-music-player .player-play-toggle").children().attr("class", "glyphicon glyphicon-play");
+            $(this).next().children().attr("class", "glyphicon glyphicon-play");
+        });
+
+        if(hAudio.currentTime > 0 && !hAudio.paused && !hAudio.ended)
+        {
+            pauseTrack($(this), hAudio);
+        }
+    else {
+        playTrack($(this), hAudio, jAudio);
+    }
+            
+    });
+
+
+    function loadTrack(hElement, jElement, mediaSource)
+    {
+        hElement.src = mediaSource;
+        hElement.load();
+    }
+
+    function playTrack(button, hElement, jElement)
+    {
+        pauseAllTracks();
+        playing = true;
+        hElement.play();
+	        $(".side-music-player .song-title").html(jElement.next().attr("data-beat-title"));
+        $(".side-music-player .song-artist").html(jElement.next().attr("data-artist-name"));
+	$(".side-music-player .player-play-toggle").attr("data-index", $("audio").index(hElement));
+    $(".side-music-player .player-play-toggle").attr("data-status", "playing").children().attr("class", "glyphicon glyphicon-pause");
+        
+    }
+
+    function pauseTrack(button, element)
+    {
+        playing = false;
+        element.pause();
+    }
+
+    function pauseAllTracks()
+    {
+                       $("audio").each(function (index){
+            if(!this.paused)
+            {
+                this.pause();
+    playing = false;
+            }
+        });
+    playing = false;
+    }
+</script>-->
+
+
+

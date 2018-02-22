@@ -1,0 +1,17 @@
+@model IEnumerable<BeatStreamr.Models.User>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="container body-content">
+    <div class="row">
+        @foreach (User item in Model) 
+		{
+		    <div class="col-md-6">
+                @Html.Partial("_ArtistListCardHorizontal", item)
+		    </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<BeatStreamr.Models.BeatArtistViewModel>
+
+
+<ul class="list-group beats-list-group">
+    @foreach(var item in Model)
+	{
+        <li class="list-group-item row">
+            <div class="track-play-toggle col-xs-1">
+                <button type="button" class="btn btn-link play-toggle" 
+			            data-beat-title="@Url.Content(item.Title)"
+				        data-artist-name="@Url.Content(item.Name)" 
+				        data-file-path="@Url.Content(item.BeatFilePath)"
+				        data-status="notplaying" 
+				        data-art-path="@Url.Content(item.ArtFilePath)">
+                    <span class="glyphicon glyphicon-play"></span></button>
+    		</div>
+		    <div class="col-xs-8">
+                <a asp-action="Details" asp-controller="Beats" asp-route-id="@item.ID">
+				    @Html.DisplayFor(modeItem => item.Title)</a> - 
+			<a asp-action="Details" asp-controller="Users" asp-route-id="@item.ArtistID">
+                    <small>@Html.DisplayFor(modeItem => item.Name)</small></a>
+		    </div>
+		    <div class="col-xs-1">
+                <span class="glyphicon glyphicon-heart"></span>
+		    </div>
+		    <div class="col-xs-1">
+
+		    </div>
+		    <div class="col-xs-1">
+			<div class="btn-group">
+            <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-option-horizontal"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a asp-action="Details" asp-route-id="@item.ID">Details</a></li>
+                <li><a asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a asp-action="Delete" asp-route-id="@item.ID">Delete</a></li>
+            </ul>
+            </div>
+		    </div>
+	    </li>
+	}
+</ul>
